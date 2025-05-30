@@ -1,0 +1,82 @@
+{
+  "name": "schedules-for-mcp",
+  "displayName": "MCP日程表",
+  "publisher": "damonliu",
+  "description": "A reminder for MCP",
+  "icon": "images/icon.png",
+  "version": "0.0.1",
+  "engines": {
+    "vscode": "^1.54.0"
+  },
+  "categories": [
+    "Other",
+    "Notebooks"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "scheduleSidebar",
+          "title": "MCP日程表",
+          "icon": "src/assets/schedule.svg"
+        }
+      ]
+    },
+    "views": {
+      "scheduleSidebar": [
+        {
+          "id": "scheduleView",
+          "icon": "src/assets/schedule.svg",
+          "name": "日程"
+        }
+      ]
+    },
+    "configuration": {
+      "type": "object",
+      "title": "MCP日程表",
+      "properties": {
+        "schedules-for-mcp.serverPort": {
+          "type": "number",
+          "default": 3001,
+          "description": "The port number for the Express server"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "schedules-for-mcp.helloWorld",
+        "title": "Hello World"
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "pnpm run compile && pnpm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.1",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "20.x",
+    "@types/node-schedule": "^2.1.7",
+    "@types/vscode": "^1.54.0",
+    "@typescript-eslint/eslint-plugin": "^8.28.0",
+    "@typescript-eslint/parser": "^8.28.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.23.0",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.13",
+    "express": "^5.1.0",
+    "node-schedule": "^2.1.1"
+  }
+}
