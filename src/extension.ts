@@ -2,7 +2,7 @@
  * @Author: Damon Liu
  * @Date: 2025-05-06 11:10:50
  * @LastEditors: Damon Liu
- * @LastEditTime: 2025-06-06 14:29:58
+ * @LastEditTime: 2025-06-06 16:56:15
  * @Description: 
  */
 // The module 'vscode' contains the VS Code extensibility API
@@ -448,7 +448,18 @@ function startServer() {
 				.filter(schedule => {
 					const scheduleDate = new Date(schedule.start);
 					return scheduleDate >= startDate && scheduleDate <= endDate;
-				});
+				})
+				.sort((a, b) => {
+					// 根据优先级排序， 进行中， 未开始， 已过期
+					const aPriority = a.schedule?.processStatusPriority || 4;
+					const bPriority = b.schedule?.processStatusPriority || 4;
+					if (aPriority !== bPriority) {
+						return aPriority - bPriority;
+					}
+					const aStart = dayjs(a?.start);
+					const bStart = dayjs(b?.start);
+					return aStart.diff(bStart);
+				});;
 
 			// 格式化返回的日期为 YYYY-MM-DD HH:mm:ss
 			const formatDate = (date: Date) => {
@@ -497,8 +508,9 @@ function startServer() {
 		store.set(SCHEDULE_KEY, filteredSchedules);
 		scheduleTreeProvider?.refresh();
 		vscode.window.showInformationMessage(`日程 ${scheduleToDelete.title} 已删除`);
-		res.status(204).send({
-			id: scheduleToDelete.id
+		res.json({
+			id: scheduleToDelete?.id,
+			message: '删除成功'
 		});
 	});
 

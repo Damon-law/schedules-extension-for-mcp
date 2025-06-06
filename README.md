@@ -2,7 +2,7 @@
  * @Author: Damon Liu
  * @Date: 2025-05-06 11:10:50
  * @LastEditors: Damon Liu
- * @LastEditTime: 2025-06-06 15:24:03
+ * @LastEditTime: 2025-06-06 17:02:37
  * @Description: 
 -->
 # MCP日程表 README
@@ -11,8 +11,11 @@
 Cursor和Trae在配置 MCP Server 后 在Chat中通过 “增加日程”、“今天三点提醒我抢票”、“每天中午十一点提醒我点外卖”、“帮我查询今天下午有什么安排”、 “删除第一个日程”等自然语言进行交互。 并在提醒时间到后在 `VSCode` 内进行提醒，点击后可查看日程详情。
 
 MCP Server 地址：
-    Github: [Damon-law/mcp_server_for_schedules](https://github.com/Damon-law/mcp_server_for_schedules)
-    Gitee: [MCP日程表的MCPServer: 与MCP日程表（ VSCode/Trae/Cursor拓展） 交互的 MCP Server](https://gitee.com/damon592/mcp_server_for_schedules)
+
+1. Github: [Damon-law/mcp_server_for_schedules](https://github.com/Damon-law/mcp_server_for_schedules)
+    
+2. Gitee: [MCP日程表的MCPServer: 与MCP日程表（ VSCode/Trae/Cursor拓展） 交互的 MCP Server](https://gitee.com/damon592/mcp_server_for_schedules)
+   
 ## 功能 Features
     
     - [x]  通过MCP新增日程 （一次性日程， 循环性日程： 每日、 每周、 每年）
@@ -22,9 +25,10 @@ MCP Server 地址：
     - [×]  编辑器内定时提醒日程
     - [ ]  ...  
 
+界面展示：
+![MCP日程表.png](images/normal_ui.png)
 
 常见IDE简易使用教程：
-
 
 
 ### Trae中使用
@@ -44,10 +48,26 @@ Trae中使用方法：
             }
         }
         ```
-        [MCP 配置成功](images/trae_mcp_setting.png)
-3. 再对下中选择智能体MCP
-   1.  
-5. 宣传册
+
+        ![MCP配置成功.png](images/trae_mcp_setting.png)
+
+3. 再对下中选择智能体MCP即可使用
+   1. ![MCP选择智能体.png](images/trae_select_mcp.png) 
+   2. 新增日程提醒操作演示
+      1.  新增循环日程
+        -  ![新增循环日程.png](images/trae_add_everyday_mission.png)
+      2.  新增一次性日程
+        - ![新增一次性日程.png](images/trae_add_mission_normal.png)
+      3.  显示提醒
+        - ![提醒.png](images/trae_notice.png) 
+      4.  查看提醒详情
+        - ![查看提醒详情.png](images/trae_notice_detail.png)
+      5.  查询日程
+        - ![查询日程.png](images/trae_check_schedules.png)
+        - ![查询日程TreeView.png](images/trae_check_schedules_tree_view.png)
+      6.  删除日程
+        -![删除日程.png](images/trae_delete_schedules.png)
+4. 宣传册
 
 
 \!\[feature X\]\(images/feature-x.png\)
@@ -60,7 +80,7 @@ MCP日程表的增删操作均有MCP Server通过http本地请求发起，因此
 
 
 
-## Extension Settings
+## 拓展配置 Extension Settings
 
 MCP日程表配置如下：
 
