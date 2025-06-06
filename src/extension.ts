@@ -2,7 +2,7 @@
  * @Author: Damon Liu
  * @Date: 2025-05-06 11:10:50
  * @LastEditors: Damon Liu
- * @LastEditTime: 2025-05-30 16:19:50
+ * @LastEditTime: 2025-06-06 14:29:58
  * @Description: 
  */
 // The module 'vscode' contains the VS Code extensibility API
@@ -81,11 +81,11 @@ const clearAllJobs = () => {
 // 显示提醒通知
 const showReminderNotification = (scheduleItem: any) => {
 	let message = `${dayjs(scheduleItem.reminder).format('HH:mm:ss')} 提醒：${scheduleItem.title} \n ${scheduleItem.description} `;
-	if(scheduleItem.start) {
+	if (scheduleItem.start) {
 		const startStr = dayjs(scheduleItem.start).format('YYYY-MM-DD HH:mm:ss');
 		message = `${message} \n 开始时间: ${startStr}`;
 	}
-	if(scheduleItem.end) {
+	if (scheduleItem.end) {
 		const endStr = dayjs(scheduleItem.end).format('YYYY-MM-DD HH:mm:ss');
 		message = `${message} \n 结束时间: ${endStr}`;
 	}
@@ -99,6 +99,7 @@ const showReminderNotification = (scheduleItem: any) => {
 			channel.show(true); // true 表示在右下角弹出
 		}
 	});
+	scheduleTreeProvider?.refresh();
 };
 
 // 检查今日提醒
@@ -139,37 +140,6 @@ const checkTodayReminders = (schedules: any[]) => {
 	});
 };
 
-// 检查明天提醒
-/* const checkTomorrowReminders = (schedules: any[]) => {
-	const now = new Date()
-	const tomorrow = new Date(now)
-	tomorrow.setDate(tomorrow.getDate() + 1)
-	const tomorrowEnd = new Date(tomorrow)
-	tomorrowEnd.setHours(23, 59, 59, 999)
-	const tomorrowSchedules = expandRecurringSchedules(schedules, tomorrow.toISOString(), tomorrowEnd.toISOString())
-	.filter(scheduleItem => {
-		if (!scheduleItem.reminder) return false
-		const reminderTime = new Date(scheduleItem.reminder)
-		return reminderTime >= tomorrow && reminderTime < tomorrowEnd && !scheduleItem.hasNotified
-	})
-
-	tomorrowSchedules.forEach(scheduleItem => {
-		const reminderTime = new Date(scheduleItem.reminder)
-		const job = schedule.scheduleJob(scheduleItem.id, reminderTime, () => {
-			showReminderNotification(scheduleItem)
-			// 更新存储中的日程状态
-			const updatedSchedules = schedules.map(s =>
-				s.id === scheduleItem.id ? { ...s, hasNotified: true } : s
-			)
-			store.set(SCHEDULE_KEY, updatedSchedules)
-			// 取消任务
-			job.cancel()
-			jobs = jobs.filter(j => j.name !== job.name)
-		})
-		jobs.push(job)
-	})
-} */
-
 // 检查单个日程是否需要提醒
 const checkSingleReminder = (scheduleItem: any) => {
 	const now = new Date();
@@ -196,8 +166,10 @@ const checkSingleReminder = (scheduleItem: any) => {
 	return null;
 };
 
+// 初始化日程表
 const initSchedule = (context: vscode.ExtensionContext) => {
 	let schedules = context.globalState.get(SCHEDULE_KEY) as any[] || [];
+	// 为空时初始化
 	if (!schedules.length) {
 		schedules = [];
 		context.globalState.update(SCHEDULE_KEY, []);
@@ -249,6 +221,7 @@ class ScheduleTreeProvider implements vscode.TreeDataProvider<ScheduleTreeItem> 
 	private _onDidChangeTreeData: vscode.EventEmitter<ScheduleTreeItem | undefined | void> = new vscode.EventEmitter<ScheduleTreeItem | undefined | void>();
 	readonly onDidChangeTreeData: vscode.Event<ScheduleTreeItem | undefined | void> = this._onDidChangeTreeData.event;
 
+	// 对齐时间到周一
 	alignToMonday(date: Date | string) {
 		const now = dayjs(date);
 		const day = now.day(); // 0=周日, 1=周一, ..., 6=周六
@@ -281,53 +254,62 @@ class ScheduleTreeProvider implements vscode.TreeDataProvider<ScheduleTreeItem> 
 			return Promise.resolve([]);
 		}
 	}
-
+	// 获取今日日程详情
 	getTodaySchedules(): ScheduleTreeItem[] {
 		const schedules: Schedule[] = store.get(SCHEDULE_KEY) as Schedule[] || [];
 		const today = dayjs();
 		const todayStart = dayjs().startOf('day').format('YYYY-MM-DD HH:mm:ss');
 		const todayEnd = dayjs().endOf('day').format('YYYY-MM-DD HH:mm:ss');
-		return expandRecurringSchedules(schedules, todayStart, todayEnd)
+		const items = expandRecurringSchedules(schedules, todayStart, todayEnd)
 			.filter(s => s.start && s.start.startsWith(today.format('YYYY-MM-DD')))
 			.map(s => new ScheduleTreeItem(`${s.processStatus} ${s.title} - ${s.start ? dayjs(s.start).format('HH:mm') : ''} ~ ${s.end ? dayjs(s.end).format('HH:mm') : ''}`, vscode.TreeItemCollapsibleState.Collapsed, s))
 			.sort((a, b) => {
+				// 根据优先级排序， 进行中， 未开始， 已过期
 				const aPriority = a.schedule?.processStatusPriority || 4;
 				const bPriority = b.schedule?.processStatusPriority || 4;
-				if(aPriority !== bPriority) {
+				if (aPriority !== bPriority) {
 					return aPriority - bPriority;
 				}
 				const aStart = dayjs(a.schedule?.start);
 				const bStart = dayjs(b.schedule?.start);
 				return aStart.diff(bStart);
 			});
+		if(items.length === 0) {
+			items.push(new ScheduleTreeItem('暂无日程', vscode.TreeItemCollapsibleState.None));
+		}
+		return items;
 	}
-
+	// 获取明日日程详情
 	getTomorrowSchedules(): ScheduleTreeItem[] {
 		const schedules: Schedule[] = store.get(SCHEDULE_KEY) as Schedule[] || [];
 		const tomorrow = dayjs().add(1, 'day');
 		const tomorrowStart = tomorrow.clone().startOf('day').toISOString();
 		const tomorrowEnd = tomorrow.clone().endOf('day').toISOString();
-		return expandRecurringSchedules(schedules, tomorrowStart, tomorrowEnd)
+		const items = expandRecurringSchedules(schedules, tomorrowStart, tomorrowEnd)
 			.filter(s => s.start && s.start.startsWith(tomorrow.format('YYYY-MM-DD')))
 			.map(s => new ScheduleTreeItem(`${s.processStatus} ${s.title} - ${s.start ? dayjs(s.start).format('HH:mm') : ''} ~ ${s.end ? dayjs(s.end).format('HH:mm') : ''}`, vscode.TreeItemCollapsibleState.Collapsed, s))
 			.sort((a, b) => {
 				const aPriority = a.schedule?.processStatusPriority || 4;
 				const bPriority = b.schedule?.processStatusPriority || 4;
-				if(aPriority !== bPriority) {
+				if (aPriority !== bPriority) {
 					return aPriority - bPriority;
 				}
 				const aStart = dayjs(a.schedule?.start);
 				const bStart = dayjs(b.schedule?.start);
 				return aStart.diff(bStart);
 			});
+		if (items.length === 0) {
+			items.push(new ScheduleTreeItem('暂无日程', vscode.TreeItemCollapsibleState.None));
+		}
+		return items;
 	}
-
+	// 获取本周日程详情
 	getWeekSchedules(): ScheduleTreeItem[] {
 		const schedules: Schedule[] = store.get(SCHEDULE_KEY) as Schedule[] || [];
-		const monday = this.alignToMonday(new Date());
+		const monday = this.alignToMonday(new Date()); 	// 对齐到周一
 		const sundayEnd = monday.clone().add(6, 'day').endOf('day');
 
-		return expandRecurringSchedules(schedules, monday.toISOString(), sundayEnd.toISOString())
+		const items = expandRecurringSchedules(schedules, monday.toISOString(), sundayEnd.toISOString())
 			.filter(s => {
 				const start = dayjs(s.start);
 				return s.start && start.isSameOrBefore(sundayEnd) && start.isSameOrAfter(monday);
@@ -336,21 +318,25 @@ class ScheduleTreeProvider implements vscode.TreeDataProvider<ScheduleTreeItem> 
 			.sort((a, b) => {
 				const aPriority = a.schedule?.processStatusPriority || 4;
 				const bPriority = b.schedule?.processStatusPriority || 4;
-				if(aPriority !== bPriority) {
+				if (aPriority !== bPriority) {
 					return aPriority - bPriority;
 				}
 				const aStart = dayjs(a.schedule?.start);
 				const bStart = dayjs(b.schedule?.start);
 				return aStart.diff(bStart);
 			});
+		if (items.length === 0) {
+			items.push(new ScheduleTreeItem('暂无日程', vscode.TreeItemCollapsibleState.None));
+		}
+		return items;
 	}
-
+	// 获取日程详情
 	getScheduleDetailItems(schedule: Schedule): ScheduleTreeItem[] {
 		const items: ScheduleTreeItem[] = [];
 		// 起止时间
 		const start = schedule.start ? dayjs(schedule.start).format('YYYY-MM-DD HH:mm:ss') : '';
 		const end = schedule.end ? dayjs(schedule.end).format('YYYY-MM-DD HH:mm:ss') : '';
-		items.push(new ScheduleTreeItem(`日程状态：${schedule.processStatus}`, vscode.TreeItemCollapsibleState.None ))
+		items.push(new ScheduleTreeItem(`日程状态：${schedule.processStatus}`, vscode.TreeItemCollapsibleState.None))
 		items.push(new ScheduleTreeItem(`开始时间: ${start}`, vscode.TreeItemCollapsibleState.None));
 		items.push(new ScheduleTreeItem(`结束时间: ${end}`, vscode.TreeItemCollapsibleState.None));
 		// 提醒时间
@@ -380,7 +366,7 @@ class ScheduleTreeProvider implements vscode.TreeDataProvider<ScheduleTreeItem> 
 		}
 		return items;
 	}
-
+	// 刷新
 	refresh(): void {
 		this._onDidChangeTreeData.fire();
 	}
@@ -424,11 +410,12 @@ function startServer() {
 			// 非循环任务，直接创建提醒
 			checkSingleReminder(newSchedule);
 		}
+		// 刷新日程表
 		scheduleTreeProvider?.refresh();
 		res.status(201).json(newSchedule);
 	});
 
-	// 根据起始时间查询日程
+	// 根据起止时间查询日程
 	app.get('/api/schedules/range', (req: any, res: any) => {
 		try {
 			const { start, end } = req.query;
@@ -533,7 +520,13 @@ export function activate(context: vscode.ExtensionContext) {
 	extensionContext = context;
 	initSchedule(context);
 	scheduleTreeProvider = new ScheduleTreeProvider();
-	vscode.window.registerTreeDataProvider('scheduleView', scheduleTreeProvider);
+	//const scheduleView =  vscode.window.registerTreeDataProvider('scheduleView', scheduleTreeProvider);
+	const scheduleView =  vscode.window.createTreeView('scheduleView', { treeDataProvider:  scheduleTreeProvider });
+	scheduleView.onDidChangeVisibility((e) => {
+		if (e.visible) {
+			scheduleTreeProvider?.refresh();
+		}
+	});
 	startServer();
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
@@ -560,7 +553,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const todaySchedulesCount = getTodaySchedulesCount();
 	let statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left, 100);
-	if(todaySchedulesCount > 0) {
+	if (todaySchedulesCount > 0) {
 		statusBarItem.text = `$(calendar) ${todaySchedulesCount}个日程`;
 		statusBarItem.command = 'schedules-for-mcp.showScheduleDetail';
 		statusBarItem.show();
