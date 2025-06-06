@@ -2,7 +2,7 @@
  * @Author: Damon Liu
  * @Date: 2025-05-06 11:10:50
  * @LastEditors: Damon Liu
- * @LastEditTime: 2025-06-06 17:02:37
+ * @LastEditTime: 2025-06-06 17:46:59
  * @Description: 
 -->
 # MCP日程表 README
@@ -25,18 +25,22 @@ MCP Server 地址：
     - [×]  编辑器内定时提醒日程
     - [ ]  ...  
 
+
 界面展示：
+
+
 ![MCP日程表.png](images/normal_ui.png)
+
+
+
 
 常见IDE简易使用教程：
 
-
-### Trae中使用
-
-Trae中使用方法：
-1. 安装插件
-2. 配置MCP Server
-   1.  ```js
+### Cursor中使用
+Cursor中使用方法：
+1. **安装插件**
+2. ** 配置MCP Server**
+    ```js
         {
             "mcpServers": {
                 "schedules": {
@@ -47,38 +51,106 @@ Trae中使用方法：
                 }
             }
         }
-        ```
+    ```
 
-        ![MCP配置成功.png](images/trae_mcp_setting.png)
+### Trae中使用
 
-3. 再对下中选择智能体MCP即可使用
-   1. ![MCP选择智能体.png](images/trae_select_mcp.png) 
-   2. 新增日程提醒操作演示
-      1.  新增循环日程
-        -  ![新增循环日程.png](images/trae_add_everyday_mission.png)
-      2.  新增一次性日程
-        - ![新增一次性日程.png](images/trae_add_mission_normal.png)
-      3.  显示提醒
-        - ![提醒.png](images/trae_notice.png) 
-      4.  查看提醒详情
-        - ![查看提醒详情.png](images/trae_notice_detail.png)
-      5.  查询日程
-        - ![查询日程.png](images/trae_check_schedules.png)
-        - ![查询日程TreeView.png](images/trae_check_schedules_tree_view.png)
-      6.  删除日程
-        -![删除日程.png](images/trae_delete_schedules.png)
-4. 宣传册
+Trae中使用方法：
 
 
-\!\[feature X\]\(images/feature-x.png\)
+1. **安装插件**
+2. ** 配置MCP Server**
+    ```js
+        {
+            "mcpServers": {
+                "schedules": {
+                // 配置了fnm的情况下 --port为指定端口，VSCode插件需与MCP Server 请求端口一致， 默认3001
+                "command": "fnm exec --using=20.10.0 node 你的路径\\mcp_server_for_schedules\\build\\index.js --port 3001"
+                // 正常node
+                "command": "npx 你的路径\\mcp_server_for_schedules\\build\\index.js --port 3001"
+                }
+            }
+        }
+    ```
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+    ![MCP配置成功.png](images/trae_mcp_setting.png)
+
+3. **再对下中选择智能体MCP即可使用**
+   
+   
+   ![MCP选择智能体.png](images/trae_select_mcp.png) 
+  
+
+4. **新增循环日程**
+  
+   ![新增循环日程.png](images/trae_add_everyday_mission.png)
+
+
+5. **新增一次性日程**
+
+
+   ![新增一次性日程.png](images/trae_add_mission_normal.png)
+
+
+
+6.  **到时间显示提醒**
+
+
+    ![提醒.png](images/trae_notice.png) 
+
+
+7.  **查看提醒详情**
+
+
+    ![查看提醒详情.png](images/trae_notice_detail.png)
+
+
+8.  **查询日程**
+
+    ![查询日程.png](images/trae_check_schedules.png)
+
+    ![查询日程TreeView.png](images/trae_check_schedules_tree_view.png)
+
+9.  **删除日程**
+
+    ![删除日程.png](images/trae_delete_schedules.png)
+
 
 ## 使用要求 Requirements
 
+
 MCP日程表的增删操作均有MCP Server通过http本地请求发起，因此需要先安装对应的 MCP Server：
 
+1. Github: [Damon-law/mcp_server_for_schedules](https://github.com/Damon-law/mcp_server_for_schedules)
+    
+2. Gitee: [MCP日程表的MCPServer: 与MCP日程表（ VSCode/Trae/Cursor拓展） 交互的 MCP Server](https://gitee.com/damon592/mcp_server_for_schedules)
 
+下载到本地后
+
+```bash
+pnpm install
+```
+
+然后
+```bash
+pnpm build
+```
+编译完成后，在 `build` 文件夹下会生成一个 `index.js` 文件，这就是我们需要的 MCP Server.
+
+在对应的IDE内配置MCP Server:
+
+ ```js
+        {
+            "mcpServers": {
+                "schedules": {
+                // 配置了fnm的情况下 --port为指定端口，VSCode插件需与MCP Server 请求端口一致， 默认3001
+                "command": "fnm exec --using=20.10.0 node 你的路径\\mcp_server_for_schedules\\build\\index.js --port 3001"
+                // 正常node
+                "command": "npx 你的路径\\mcp_server_for_schedules\\build\\index.js --port 3001"
+                }
+            }
+        }
+```
 
 ## 拓展配置 Extension Settings
 
