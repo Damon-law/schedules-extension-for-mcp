@@ -2,7 +2,7 @@
  * @Author: Damon Liu
  * @Date: 2025-05-06 11:10:50
  * @LastEditors: Damon Liu
- * @LastEditTime: 2025-06-09 16:30:30
+ * @LastEditTime: 2025-06-09 17:02:52
  * @Description: 
 -->
 # MCP日程表 README
@@ -39,7 +39,7 @@ MCP Server 地址：
 ### Cursor中使用
 Cursor中使用方法：
 1. **安装插件**
-2. ** 配置MCP Server**
+2. **配置MCP Server**
     ```js
         {
             "mcpServers": {
@@ -60,6 +60,8 @@ Cursor中使用方法：
 
     ![新增循环日程.png](images/cursor_add_everyday_mission.png)
 
+    
+
 4. **新增一次性日程**
      
 
@@ -77,7 +79,7 @@ Cursor中使用方法：
 
     ![查看提醒详情.png](images/cursor_notice_detail.png)
 
-7.    **查询日程**
+7.  **查询日程**
 
     ![查询日程.png](images/cursor_check_shedules.png)
 
@@ -98,7 +100,7 @@ Trae中使用方法：
 `Trae` **中的 通知好像是默认设置为勿打扰模式，需要手动打开通知；**
 
 1. **安装插件**
-2. ** 配置MCP Server**
+2. **配置MCP Server**
     ```js
         {
             "mcpServers": {
