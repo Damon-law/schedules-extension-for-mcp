@@ -2,7 +2,7 @@
  * @Author: Damon Liu
  * @Date: 2025-05-06 11:10:50
  * @LastEditors: Damon Liu
- * @LastEditTime: 2025-06-09 17:02:52
+ * @LastEditTime: 2025-06-11 17:47:37
  * @Description: 
 -->
 # MCP日程表 README
@@ -34,7 +34,7 @@ MCP Server 地址：
 
 
 
-常见IDE简易使用教程：
+常见编辑器简易使用教程：
 
 ### Cursor中使用
 Cursor中使用方法：
@@ -44,10 +44,10 @@ Cursor中使用方法：
         {
             "mcpServers": {
                 "schedules": {
-                // 配置了fnm的情况下 --port为指定端口，VSCode插件需与MCP Server 请求端口一致， 默认3001
+                // 配置了fnm的情况下，先指定你使用的node版本， --port为指定端口，VSCode插件需与MCP Server 请求端口一致， 默认3001
                 "command": "fnm exec --using=20.10.0 node 你的路径\\mcp_server_for_schedules\\build\\index.js --port 3001"
                 // 正常node
-                "command": "npx 你的路径\\mcp_server_for_schedules\\build\\index.js --port 3001"
+                "command": "node 你的路径\\mcp_server_for_schedules\\build\\index.js --port 3001"
                 }
             }
         }
@@ -97,7 +97,11 @@ Cursor中使用方法：
 
 Trae中使用方法：
 
-`Trae` **中的 通知好像是默认设置为勿打扰模式，需要手动打开通知；**
+`Trae` **中的 通知好像是默认设置为勿打扰模式，需要手动打开通知：**
+
+
+![打开通知.png](images/trae_open_alert.png)
+
 
 1. **安装插件**
 2. **配置MCP Server**
@@ -105,10 +109,10 @@ Trae中使用方法：
         {
             "mcpServers": {
                 "schedules": {
-                // 配置了fnm的情况下 --port为指定端口，VSCode插件需与MCP Server 请求端口一致， 默认3001
+                // 配置了fnm的情况下，先指定你使用的node版本， --port为指定端口，VSCode插件需与MCP Server 请求端口一致， 默认3001
                 "command": "fnm exec --using=20.10.0 node 你的路径\\mcp_server_for_schedules\\build\\index.js --port 3001"
                 // 正常node
-                "command": "npx 你的路径\\mcp_server_for_schedules\\build\\index.js --port 3001"
+                "command": "node 你的路径\\mcp_server_for_schedules\\build\\index.js --port 3001"
                 }
             }
         }
@@ -160,7 +164,7 @@ Trae中使用方法：
 ## 使用要求 Requirements
 
 
-MCP日程表的增删操作均有MCP Server通过http本地请求发起，因此需要先安装对应的 MCP Server：
+MCP日程表的增删操作均有MCP Server通过http本地请求发起，因此需要先安装对应的 `MCP Server`：
 
 1. Github: [Damon-law/mcp_server_for_schedules](https://github.com/Damon-law/mcp_server_for_schedules)
     
@@ -171,12 +175,25 @@ MCP日程表的增删操作均有MCP Server通过http本地请求发起，因此
 ```bash
 pnpm install
 ```
+或
+
+```bash
+npm  install
+```
 
 然后
+
 ```bash
 pnpm build
 ```
-编译完成后，在 `build` 文件夹下会生成一个 `index.js` 文件，这就是我们需要的 MCP Server.
+
+或
+
+```bash
+npm  run build
+```
+
+编译完成后，在 `build` 文件夹下会生成一个 `index.js` 文件，这就是我们需要的 `MCP Server`.
 
 在对应的IDE内配置MCP Server:
 
@@ -184,10 +201,10 @@ pnpm build
         {
             "mcpServers": {
                 "schedules": {
-                // 配置了fnm的情况下 --port为指定端口，VSCode插件需与MCP Server 请求端口一致， 默认3001
+                // 配置了fnm的情况下，先指定你使用的node版本， --port为指定端口，VSCode插件需与MCP Server 请求端口一致， 默认3001
                 "command": "fnm exec --using=20.10.0 node 你的路径\\mcp_server_for_schedules\\build\\index.js --port 3001"
                 // 正常node
-                "command": "npx 你的路径\\mcp_server_for_schedules\\build\\index.js --port 3001"
+                "command": "node 你的路径\\mcp_server_for_schedules\\build\\index.js --port 3001"
                 }
             }
         }
@@ -205,6 +222,13 @@ MCP日程表配置如下：
 
 ## 版本更新 Release Notes
 
+### 0.0.3
+
+更新了README.md， 更改为`github`的图片路径
+
+### 0.0.2
+
+更新了README.md， 更改为`gitee`的图片路径
 
 ### 0.0.1
 

@@ -2,7 +2,7 @@
  * @Author: Damon Liu
  * @Date: 2025-05-06 11:10:50
  * @LastEditors: Damon Liu
- * @LastEditTime: 2025-06-09 15:26:59
+ * @LastEditTime: 2025-06-11 16:19:18
  * @Description: 
  */
 // The module 'vscode' contains the VS Code extensibility API
@@ -378,6 +378,8 @@ let scheduleTreeProvider: ScheduleTreeProvider | null = null;
 function startServer() {
 	if (server) {
 		server.close();
+		server = null;
+		return ;
 	}
 	const config = vscode.workspace.getConfiguration('schedules-for-mcp');
 	let port = config.get<number>('serverPort', 3001);	// 获取配置文件中的server Port
@@ -527,6 +529,10 @@ function startServer() {
 vscode.workspace.onDidChangeConfiguration((e) => {
 	if (e.affectsConfiguration('schedules-for-mcp.serverPort')) {
 		clearAllJobs();
+		if(server) {
+			server.close();
+			server = null;
+		}
 		startServer();
 	}
 });
@@ -542,7 +548,9 @@ export function activate(context: vscode.ExtensionContext) {
 			scheduleTreeProvider?.refresh();
 		}
 	});
-	startServer();
+	if(!server) {
+		startServer();
+	}
 
 	// Use the console to output diagnostic information (console.log) and errors (console.error)
 	// This line of code will only be executed once when your extension is activated
@@ -585,5 +593,6 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
 	if (server) {
 		server.close();
+		server = null;
 	}
 }

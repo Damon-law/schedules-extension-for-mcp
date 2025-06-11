@@ -2,9 +2,9 @@
   "name": "schedules-for-mcp",
   "displayName": "MCP日程表",
   "publisher": "damonliu",
-  "description": "A reminder for MCP",
+  "description": "A reminder for MCP. 支持MCP Server的日程提醒拓展",
   "icon": "images/icon.png",
-  "version": "0.0.1",
+  "version": "0.0.3",
   "engines": {
     "vscode": "^1.54.0"
   },
@@ -22,7 +22,7 @@
         {
           "id": "scheduleSidebar",
           "title": "MCP日程表",
-          "icon": "src/assets/schedule.svg"
+          "icon": "media/schedule.svg"
         }
       ]
     },
@@ -30,7 +30,7 @@
       "scheduleSidebar": [
         {
           "id": "scheduleView",
-          "icon": "src/assets/schedule.svg",
+          "icon": "media/schedule.svg",
           "name": "日程"
         }
       ]
@@ -78,5 +78,9 @@
     "dayjs": "^1.11.13",
     "express": "^5.1.0",
     "node-schedule": "^2.1.1"
-  }
+  },
+  "files": [
+    "out",
+    "media"
+  ]
 }
