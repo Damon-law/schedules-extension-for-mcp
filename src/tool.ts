@@ -2,12 +2,12 @@
  * @Author: Damon Liu
  * @Date: 2025-05-06 15:30:20
  * @LastEditors: Damon Liu
- * @LastEditTime: 2025-05-30 16:06:55
+ * @LastEditTime: 2025-06-16 15:34:15
  * @Description: 
  */
 import dayjs from 'dayjs';
-import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
-import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
+import isSameOrBefore from 'dayjs/plugin/isSameOrBefore.js';
+import isSameOrAfter from 'dayjs/plugin/isSameOrAfter.js';
 
 dayjs.extend(isSameOrAfter);
 dayjs.extend(isSameOrBefore);
@@ -17,7 +17,7 @@ const processStatusPriorityMap: { [key: string]: number } = {
     '[未开始]': 2,
     '[已过期]': 3,
     undefined: 4
-}
+};
 
 // 展开日程
 export function expandRecurringSchedules(schedules: any[], fromDate: string, toDate: string) {
